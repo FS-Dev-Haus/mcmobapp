@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mcmobapp/pages/login.dart';
+import 'package:mcmobapp/pages/auth/login.dart';
 
 void main() {
   runApp(MyApp());

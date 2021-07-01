@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mcmobapp/pages/auth/register.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({ Key? key }) : super(key: key);
@@ -11,8 +12,14 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  submitLogin() {
+  void submitLogin() {
 
+  }
+
+  toRegister() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return RegisterForm();
+    }));
   }
 
   @override
@@ -105,7 +112,7 @@ class _LoginFormState extends State<LoginForm> {
             child: ConstrainedBox(
               constraints: BoxConstraints.tightFor(width: 500),
               child: ElevatedButton.icon(
-                onPressed: (){}, 
+                onPressed: toRegister, 
                 label: Text('Not Registered Yet?'),
                 icon: Icon(Icons.app_registration), 
                 style: ElevatedButton.styleFrom(
