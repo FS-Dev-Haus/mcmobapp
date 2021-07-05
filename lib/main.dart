@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mcmobapp/pages/auth/login.dart';
+import 'package:mcmobapp/pages/dashboard/dashboard.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.white,
         primarySwatch: Colors.blue,
       ),
-      home: LoginForm(),
+      home: DashboardApp(),
     );
   }
 }
