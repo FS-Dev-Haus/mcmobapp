@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mcmobapp/pages/dashboard/addCategory.dart';
+import 'package:mcmobapp/pages/dashboard/addItem.dart';
 import 'package:mcmobapp/pages/layouts/sidedrawer.dart';
 
 class DashboardApp extends StatelessWidget {
@@ -33,7 +35,7 @@ class _DashboardState extends State<Dashboard> {
         backgroundColor: Colors.transparent,
       ),
       body: Center(
-        child: Text('Dashboard'),
+        child: addItemPage(),
       ),
     );
   }
