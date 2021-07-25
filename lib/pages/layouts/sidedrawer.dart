@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mcmobapp/api/auth.dart';
+import 'package:mcmobapp/api/itemsApi.dart';
+import 'package:provider/provider.dart';
 
 class SideDrawer extends StatelessWidget {
   const SideDrawer({ Key? key }) : super(key: key);
@@ -26,7 +29,11 @@ class SideDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.list_alt),
             title: Text('Item Inventory'),
-            onTap: (){},
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return ItemList();
+              }));
+            },
           ),
           ListTile(
             leading: Icon(Icons.account_tree_outlined),
@@ -41,7 +48,9 @@ class SideDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.logout),
             title: Text('Logout'),
-            onTap: (){},
+            onTap: () async {
+              await Provider.of<Auth>(context, listen: false).logout();
+            },
           ),
         ],
       ),

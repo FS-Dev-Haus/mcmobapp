@@ -1,66 +1,62 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:mcmobapp/api/auth.dart';
-import 'package:provider/provider.dart';
 
-class Item {
+class Category {
   final int? id;
   final String? name;
-  final String? price;
-  final int? quantity;
+  final int? itemsCount;
   final int? orgId;
-  final int? categoryId;
 
-  Item({this.id, this.name, this.price, this.quantity, this.orgId, this.categoryId});
+  Category({this.id, this.name, this.itemsCount, this.orgId});
 
-  factory Item.fromJson(Map<String, dynamic> json) {
-    return Item(
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
       id: json['id'],
       name: json['name'],
-      price: json['price'],
-      quantity: json['quantity'],
+      itemsCount: json['items_count'],
       orgId: json['org_id'],
-      categoryId: json['category_id'],
     );
   }
 }
 
-class ItemList extends StatefulWidget {
+class CategoryList extends StatefulWidget {
   @override
-  _ItemListState createState() => _ItemListState();
+  _CategoryListState createState() => _CategoryListState();
 }
 
-class _ItemListState extends State<ItemList> {
-  late Future<List<Item>> futureItems;
+class _CategoryListState extends State<CategoryList> {
+  late Future<List<Category>> futureCategories;
 
   @override
   void initState() {
     super.initState();
-    futureItems = fetchItems();
+    futureCategories = fetchCategories();
   }
 
-  Future<List<Item>> fetchItems() async {
-    // ignore: deprecated_member_use
-    List<Item> items = [];
+  Future<List<Category>> fetchCategories() async {
+    List<Category> categories = [];
     String token = await Provider.of<Auth>(context, listen: false).getToken();
     final response = await http.get(
-      Uri.parse('https://mcinvalpha.herokuapp.com/api/items'),
+      Uri.parse('https://mcinvalpha.herokuapp.com/api/categories'),
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer $token'
       }
     );
-    print(response.body);
+
     if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body)["items"];
+      List<dynamic> data = json.decode(response.body);
       for (var i = 0; i < data.length; i++) {
         print(data[i]);
-        items.add(Item.fromJson(data[i]));
+        categories.add(Category.fromJson(data[i]));
       }
-      return items;
+      return categories;
     } else {
-      throw Exception('Problem loading items');
+      throw Exception('Problem loading categories');
     }
   }
 
@@ -71,7 +67,7 @@ class _ItemListState extends State<ItemList> {
         Expanded(
           child: Column(
             children: [
-              ItemListBuilder(futureItems: futureItems)
+              CategoryListBuilder(futureCategories: futureCategories)
             ],
           ),
         ),
@@ -80,28 +76,28 @@ class _ItemListState extends State<ItemList> {
   }
 }
 
-class ItemListBuilder extends StatelessWidget {
-  const ItemListBuilder({ 
+class CategoryListBuilder extends StatelessWidget {
+  const CategoryListBuilder({ 
     Key? key,
-    required this.futureItems
+    required this.futureCategories 
   }) : super(key: key);
 
-  final Future<List<Item>> futureItems;
+  final Future<List<Category>> futureCategories;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Item>>(
-      future: futureItems,
+    return FutureBuilder<List<Category>>(
+      future: futureCategories,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Expanded(
             child: ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
-                Item item = snapshot.data![index];
+                Category category = snapshot.data![index];
                 return ListTile(
-                  title: Text('${item.name}'),
-                  subtitle: Text('${double.parse(item.price!)}'),
+                  title: Text('${category.name}'),
+                  subtitle: Text('${category.itemsCount}'),
                 );
               }
             ),
@@ -110,7 +106,7 @@ class ItemListBuilder extends StatelessWidget {
           return Text("${snapshot.error}");
         }
         return CircularProgressIndicator();
-      },
+      }
     );
   }
 }
