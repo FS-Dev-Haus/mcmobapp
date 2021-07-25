@@ -152,7 +152,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       primary: Colors.blueAccent,
                       shadowColor: Colors.grey,
                       shape: new RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)
+                        borderRadius: BorderRadius.circular(10)
                       ),
                       textStyle: TextStyle(
                         fontWeight: FontWeight.w300
@@ -173,7 +173,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       primary: Colors.black,
                       shadowColor: Colors.grey,
                       shape: new RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)
+                        borderRadius: BorderRadius.circular(10)
                       ),
                       textStyle: TextStyle(
                         fontWeight: FontWeight.w300

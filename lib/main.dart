@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mcmobapp/pages/auth/login.dart';
+import 'package:mcmobapp/api/auth.dart';
 import 'package:mcmobapp/pages/dashboard/dashboard.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (BuildContext context) => Auth(),
+      child: MyApp()
+      )
+    );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,12 +18,26 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'MC Inventory Manager',
       theme: ThemeData(
         primaryColor: Colors.white,
         primarySwatch: Colors.blue,
       ),
-      home: DashboardApp(),
+      home: Scaffold(
+        body: Center(
+          child: Consumer<Auth>(
+            builder: (context, auth, child) {
+              Provider.of<Auth>(context, listen: false).checkToken();
+              switch (auth.isAuthenticated) {
+                case true:
+                  return DashboardApp();
+                default:
+                  return LoginForm();
+              }
+            },
+          ),
+        ),
+      ),
     );
   }
 }
