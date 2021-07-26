@@ -44,6 +44,39 @@ class Auth extends ChangeNotifier {
     return false;
   }
 
+  Future<bool> register(String name, String email, String password, String confirmPassword) async {
+    final response = await http.post(
+      Uri.parse('https://mcinvalpha.herokuapp.com/api/register'),
+      body: {
+        'name': name,
+        'email': email,
+        'password': password,
+        'password_confirmation': password,
+        'device_name': await getDeviceId()
+      },
+      headers: {
+        'Accept': 'application/json'
+      }
+    );
+
+    if (response.statusCode == 201) {
+      String token = json.decode(response.body)['token'];
+      await saveToken(token);
+      _isAuthenticated = true;
+      notifyListeners();
+      return true;
+    }
+
+    if (response.statusCode == 422) {
+      print("422");
+      return false;
+    }
+    print("Others");
+    print(response.statusCode);
+    print(response.body);
+    return false;
+  }
+
   getDeviceId() async {
     final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
 

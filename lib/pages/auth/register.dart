@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mcmobapp/api/auth.dart';
+import 'package:provider/provider.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({ Key? key }) : super(key: key);
@@ -11,9 +13,14 @@ class _RegisterFormState extends State<RegisterForm> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController cPasswordController = TextEditingController();
 
-  void submitRegister() {
-
+  void submitRegister() async {
+    String _name = emailController.text;
+    String _email = emailController.text;
+    String _password = passwordController.text;
+    String _cPassword = cPasswordController.text;
+    bool result = await Provider.of<Auth>(context, listen: false).register(_name, _email, _password, _cPassword);
   }
 
   void toLogin() {
@@ -116,7 +123,7 @@ class _RegisterFormState extends State<RegisterForm> {
               Container(
                 margin: EdgeInsets.only(left: 50, right: 50),
                 child: TextField(
-                  controller: passwordController,
+                  controller: cPasswordController,
                   obscureText: true,
                   textAlign: TextAlign.center,
                   cursorHeight: 25,
