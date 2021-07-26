@@ -67,6 +67,39 @@ class _CategoryListState extends State<CategoryList> {
         Expanded(
           child: Column(
             children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                margin: EdgeInsets.only(left: 30, right: 30),
+                child: Row(
+                  children: [
+                    Text(
+                      'Category List',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 20),
+                      child: ElevatedButton.icon(
+                      onPressed: () {}, 
+                      label: Text('Add Category'),
+                      icon: Icon(Icons.add), 
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.blueAccent,
+                        shadowColor: Colors.grey,
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        textStyle: TextStyle(
+                          fontWeight: FontWeight.w300
+                        ),
+                      ),
+                  ),
+                    ),
+                  ]
+                ),
+              ),
               CategoryListBuilder(futureCategories: futureCategories)
             ],
           ),
@@ -98,6 +131,18 @@ class CategoryListBuilder extends StatelessWidget {
                 return ListTile(
                   title: Text('${category.name}'),
                   subtitle: Text('${category.itemsCount}'),
+                  trailing: ElevatedButton.icon(
+                    onPressed: () {},
+                    label: Text('Detail'),
+                    icon: Icon(Icons.menu_open),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.grey,
+                      elevation: 0,
+                      // textStyle: TextStyle(
+                      //   color: Colors.black
+                      // )
+                    ),
+                  ),
                 );
               }
             ),
