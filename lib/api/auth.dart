@@ -45,6 +45,7 @@ class Auth extends ChangeNotifier {
   }
 
   Future<bool> register(String name, String email, String password, String confirmPassword) async {
+    print('masuk register');
     final response = await http.post(
       Uri.parse('https://mcinvalpha.herokuapp.com/api/register'),
       body: {
@@ -69,6 +70,7 @@ class Auth extends ChangeNotifier {
 
     if (response.statusCode == 422) {
       print("422");
+      print(response.body);
       return false;
     }
     print("Others");

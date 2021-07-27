@@ -21,6 +21,35 @@ class _RegisterFormState extends State<RegisterForm> {
     String _password = passwordController.text;
     String _cPassword = cPasswordController.text;
     bool result = await Provider.of<Auth>(context, listen: false).register(_name, _email, _password, _cPassword);
+
+    if (!result) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text("Register Status"),
+          content: Text("Failed to register"),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              style: ButtonStyle(
+                alignment: Alignment.center,
+                
+              ),
+              child: Text(
+                "Okay",
+                style: TextStyle(
+                  fontSize: 18
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      Navigator.pop(context);
+    }
   }
 
   void toLogin() {
