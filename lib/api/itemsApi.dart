@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mcmobapp/api/auth.dart';
+import 'package:mcmobapp/pages/dashboard/addItem.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Item {
   final int? id;
@@ -86,7 +88,11 @@ class _ItemListState extends State<ItemList> {
                     Container(
                       margin: EdgeInsets.only(left: 60),
                       child: ElevatedButton.icon(
-                      onPressed: () {}, 
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          return addItemForm();
+                        }));
+                      }, 
                       label: Text('Add Item'),
                       icon: Icon(Icons.add), 
                       style: ElevatedButton.styleFrom(
@@ -136,7 +142,11 @@ class ItemListBuilder extends StatelessWidget {
                   title: Text('${item.name}'),
                   subtitle: Text('${double.parse(item.price!)}'),
                   trailing: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return EditItemForm(item: item);
+                      }));
+                    },
                     label: Text('Detail'),
                     icon: Icon(Icons.menu_open),
                     style: ElevatedButton.styleFrom(
@@ -156,6 +166,273 @@ class ItemListBuilder extends StatelessWidget {
         }
         return CircularProgressIndicator();
       },
+    );
+  }
+}
+
+class EditItemForm extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
+  // late Item item;
+  late int? id;
+  late TextEditingController nameController;
+  late TextEditingController priceController;
+  late TextEditingController quantityController;
+  
+  EditItemForm({required Item item}) {
+    id = item.id;
+    nameController = TextEditingController(text: item.name);
+    priceController = TextEditingController(text: item.price);
+    quantityController = TextEditingController(text: item.quantity.toString());
+  }
+  
+  // EditItemForm({ Key? key, required this.item }) : super(key: key);
+
+  Future<bool> editItem(String name, String price, String quantity) async {
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token')!;
+    final response = await http.put(
+      Uri.parse('https://mcinvalpha.herokuapp.com/api/items/$id'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: {
+        'name': name,
+        'price': price,
+        'quantity': quantity,
+        'category_id': '11'
+      }
+    );
+
+    if (response.statusCode == 201) {
+      print(201);
+      return true;
+    }
+
+    if (response.statusCode == 422) {
+      print('sini 422');
+      return false;
+    }
+    print(response.body);
+    print('last');
+    return false;
+  }
+
+  Future<bool> deleteItem() async {
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token')!;
+    final response = await http.delete(
+      Uri.parse('https://mcinvalpha.herokuapp.com/api/items/$id'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+
+    if (response.statusCode == 201) {
+      print(201);
+      return true;
+    }
+
+    if (response.statusCode == 422) {
+      print('sini 422');
+      return false;
+    }
+    print(response.body);
+    print('last');
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print(id);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add Item'),
+      ),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                hintText: 'Enter Item Name',
+                labelText: 'Product Name',
+                contentPadding: EdgeInsets.all(20),
+              ),
+            ),
+            TextField(
+              controller: priceController,
+              decoration: const InputDecoration(
+                hintText: 'Price per Item',
+                labelText: 'Product Price',
+                contentPadding: EdgeInsets.all(20),
+              ),
+            ),
+            TextField(
+              controller: quantityController,
+              decoration: const InputDecoration(
+                hintText: 'Enter Quantity',
+                labelText: 'Quantity',
+                contentPadding: EdgeInsets.all(20),
+              ),
+            ),
+            // new Container(
+            //   padding: EdgeInsets.all(20),
+            //   child: DropdownButton<int>(
+            //     value: _value,
+            //     onChanged: (int? newValue) {
+            //       setState(() {
+            //         _value = newValue!;
+            //       });
+            //     },
+            //     items: <int>[1,2,3]
+            //       .map<DropdownMenuItem<int>>((int value) {
+            //         return DropdownMenuItem<int>(
+            //           value: value,
+            //           child: Text(value.toString()),
+            //         );
+            //       }).toList(),
+            //     // items: [
+            //     //   DropdownMenuItem<int>(
+            //     //     child: Text("Category 1"),
+            //     //     value: 1,
+            //     //   ),
+            //     // ],
+            //   )
+            // ),
+            new Container(
+                padding: const EdgeInsets.only(left: 150.0, top: 40.0),
+                child: new ElevatedButton(
+                  child: const Text('Update'),
+                  onPressed: () async {
+                    bool settle = await editItem(nameController.text, priceController.text, quantityController.text);
+
+                    if (settle) {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text("Edit Status"),
+                          content: Text("You have edited an item"),
+                          actions: <Widget>[
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(ctx).pop();
+                              },
+                              style: ButtonStyle(
+                                alignment: Alignment.center,
+                                
+                              ),
+                              child: Text(
+                                "Okay",
+                                style: TextStyle(
+                                  fontSize: 18
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text("Edit Status"),
+                          content: Text("Failed to edit item"),
+                          actions: <Widget>[
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(ctx).pop();
+                              },
+                              style: ButtonStyle(
+                                alignment: Alignment.center,
+                                
+                              ),
+                              child: Text(
+                                "Okay",
+                                style: TextStyle(
+                                  fontSize: 18
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/items');
+                  },
+                )),
+            new Container(
+                padding: const EdgeInsets.only(left: 150.0, top: 10.0),
+                child: new ElevatedButton(
+                  child: const Text('Delete'),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red
+                  ),
+                  onPressed: () async {
+                    bool settle = await deleteItem();
+
+                    if (settle) {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text("Delete Status"),
+                          content: Text("You have deleted an item"),
+                          actions: <Widget>[
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(ctx).pop();
+                              },
+                              style: ButtonStyle(
+                                alignment: Alignment.center,
+                                
+                              ),
+                              child: Text(
+                                "Okay",
+                                style: TextStyle(
+                                  fontSize: 18
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text("Delete Status"),
+                          content: Text("Failed to delete item"),
+                          actions: <Widget>[
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(ctx).pop();
+                              },
+                              style: ButtonStyle(
+                                alignment: Alignment.center,
+                                
+                              ),
+                              child: Text(
+                                "Okay",
+                                style: TextStyle(
+                                  fontSize: 18
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/items');
+                  },
+                )),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -62,6 +62,7 @@ class _CategoryListState extends State<CategoryList> {
 
   @override
   Widget build(BuildContext context) {
+    print(futureCategories.toString());
     return Column(
       children: [
         Expanded(
@@ -152,6 +153,22 @@ class CategoryListBuilder extends StatelessWidget {
         }
         return CircularProgressIndicator();
       }
+    );
+  }
+}
+
+class CategoryDropdown extends StatefulWidget {
+  const CategoryDropdown({ Key? key }) : super(key: key);
+
+  @override
+  _CategoryDropdownState createState() => _CategoryDropdownState();
+}
+
+class _CategoryDropdownState extends State<CategoryDropdown> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      
     );
   }
 }

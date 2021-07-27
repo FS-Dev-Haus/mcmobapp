@@ -34,13 +34,13 @@ class SideDrawer extends StatelessWidget {
               Navigator.pushNamed(context, '/items');
             },
           ),
-          ListTile(
-            leading: Icon(Icons.account_tree_outlined),
-            title: Text('Category'),
-            onTap: (){
-              Navigator.pushNamed(context, '/categories');
-            },
-          ),
+          // ListTile(
+          //   leading: Icon(Icons.account_tree_outlined),
+          //   title: Text('Category'),
+          //   onTap: (){
+          //     Navigator.pushNamed(context, '/categories');
+          //   },
+          // ),
           ListTile(
             leading: Icon(Icons.person),
             title: Text('My Profile'),
